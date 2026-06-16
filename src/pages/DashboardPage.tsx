@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteTest, getTests } from '../api/tests';
 import { getSubjects } from '../api/subjects';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { Layout } from '../components/Layout';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { formatDate, getTestTypeLabel } from '../utils/testDisplay';
@@ -22,6 +23,7 @@ export function DashboardPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const loadTests = async () => {
     setLoading(true);
@@ -54,12 +56,14 @@ export function DashboardPage() {
     });
   }, [tests, search, statusFilter, subjects]);
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Delete "${name}"? This action cannot be undone.`)) return;
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    const { id } = deleteTarget;
     setDeletingId(id);
     try {
       await deleteTest(id);
       setTests((prev) => prev.filter((t) => t.id !== id));
+      setDeleteTarget(null);
     } catch {
       notifyError('Failed to delete test.', 'Delete failed');
     } finally {
@@ -155,7 +159,7 @@ export function DashboardPage() {
                         type="button"
                         className="btn btn-danger-outline btn-sm"
                         disabled={deletingId === test.id}
-                        onClick={() => void handleDelete(test.id, test.name)}
+                        onClick={() => setDeleteTarget({ id: test.id, name: test.name })}
                       >
                         Delete
                       </button>
@@ -167,6 +171,20 @@ export function DashboardPage() {
           </table>
         </div>
       )}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete test?"
+        message={
+          deleteTarget
+            ? `Are you sure you want to delete "${deleteTarget.name}"? This action cannot be undone.`
+            : ''
+        }
+        confirming={deletingId === deleteTarget?.id}
+        onConfirm={() => void handleDeleteConfirm()}
+        onCancel={() => {
+          if (deletingId === null) setDeleteTarget(null);
+        }}
+      />
     </Layout>
   );
 }

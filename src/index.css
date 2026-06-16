@@ -961,6 +961,18 @@ img {
   border-color: #fecaca;
 }
 
+.btn-danger {
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  min-width: 6.5rem;
+  border-radius: 8px;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
 .btn-exit {
   background: #fee2e2;
   color: var(--color-danger);
@@ -1921,6 +1933,47 @@ img {
 .option-label {
   font-weight: 600;
   min-width: 1.25rem;
+}
+
+/* Confirm dialog */
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.confirm-dialog {
+  width: min(100%, 24rem);
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+}
+
+.confirm-dialog-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.confirm-dialog-message {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 /* Notification toast */
